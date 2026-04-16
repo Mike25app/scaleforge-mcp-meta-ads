@@ -1,11 +1,12 @@
 {
   "name": "@getscaleforge/mcp-meta-ads",
-  "version": "0.1.0",
-  "description": "Model Context Protocol server for ScaleForge — control bulk Meta Ads campaigns via Claude, GPT, Cursor, or any MCP-compatible AI agent.",
+  "version": "0.2.0",
+  "description": "Meta Ads MCP server — control Facebook/Instagram campaigns from Claude, ChatGPT, Cursor, or any MCP agent. Direct Meta Graph API v24.0, 32 tools, no backend required.",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
-    "scaleforge-mcp": "dist/index.js"
+    "scaleforge-mcp": "dist/index.js",
+    "mcp-meta-ads": "dist/index.js"
   },
   "files": [
     "dist"
@@ -14,18 +15,24 @@
     "build": "tsc",
     "watch": "tsc --watch",
     "start": "node dist/index.js",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build && chmod +x dist/index.js"
   },
   "keywords": [
     "mcp",
     "model-context-protocol",
-    "scaleforge",
     "meta-ads",
     "facebook-ads",
-    "automation",
+    "instagram-ads",
+    "meta-marketing-api",
+    "graph-api",
     "claude",
+    "claude-desktop",
+    "cursor",
+    "chatgpt",
     "ai-agent",
-    "llm"
+    "llm",
+    "automation",
+    "scaleforge"
   ],
   "author": "ScaleForge <michael@getscaleforge.com>",
   "license": "MIT",

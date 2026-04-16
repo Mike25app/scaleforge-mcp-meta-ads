@@ -1,0 +1,16 @@
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required: [metaAccessToken]
+    properties:
+      metaAccessToken:
+        type: string
+        title: Meta Access Token
+        description: "Meta Marketing API token. Quick token from Graph API Explorer (expires in 2h) or stable System User token from Business Manager (never expires). See https://github.com/Mike25app/scaleforge-mcp-meta-ads#stable-tokens"
+  commandFunction: |-
+    (config) => ({
+      command: "npx",
+      args: ["-y", "@getscaleforge/mcp-meta-ads"],
+      env: { META_ACCESS_TOKEN: config.metaAccessToken }
+    })

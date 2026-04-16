@@ -1,45 +1,86 @@
 import { z } from "zod";
-import { apiCall } from "../client.js";
+import { metaGet } from "../client.js";
 import type { ToolDef } from "./types.js";
+
+/**
+ * Accept either the bare numeric id ("123456789") or the act_-prefixed form
+ * ("act_123456789"). Meta's /me/adaccounts returns the prefixed form, but
+ * media buyers often paste without it.
+ */
+function toAdAccountPath(idOrActId: string): string {
+  return idOrActId.startsWith("act_") ? idOrActId : `act_${idOrActId}`;
+}
+
+const DEFAULT_ACCOUNT_FIELDS =
+  "id,name,account_status,currency,business_name,business,spend_cap,amount_spent,balance,timezone_name,timezone_offset_hours_utc,disable_reason,funding_source_details";
 
 export const accountTools: ToolDef[] = [
   {
     name: "list_ad_accounts",
     description:
-      "List the Meta Ad Accounts owned by the authenticated ScaleForge user. " +
-      "Returns only visible accounts, ordered by position then name. Each item " +
-      "includes id (ScaleForge), meta_account_id (act_XXX), page_id, pixel_id, " +
-      "connection status, and rate-limit usage. Paginated via page / per_page.",
+      "List Meta Ad Accounts accessible to the current access token. Returns id (act_XXX), " +
+      "name, account_status, currency, business_name, spend_cap, timezone_name. " +
+      "Use this first to discover what you can work with.",
     inputSchema: {
-      page: z.number().int().positive().optional().describe("Page number, defaults to 1"),
-      per_page: z
+      limit: z
         .number()
         .int()
         .positive()
-        .max(100)
+        .max(500)
         .optional()
-        .describe("Items per page (max 100), defaults to 25"),
+        .describe("Max accounts per page (Meta caps ~500, default 100)"),
+      after: z
+        .string()
+        .optional()
+        .describe("Cursor for next page (from previous response's paging.cursors.after)"),
     },
     handler: async (args) =>
-      apiCall("/api/v1/ad_accounts", {
-        query: { page: args.page, per_page: args.per_page },
+      metaGet("/me/adaccounts", {
+        fields:
+          "id,name,account_status,currency,business_name,spend_cap,timezone_name",
+        limit: args.limit ?? 100,
+        after: args.after,
+      }),
+  },
+
+  {
+    name: "get_ad_account",
+    description:
+      "Get detailed info for a single Ad Account: status, spend cap, balance, funding source, " +
+      "business, timezone, disable_reason. Returns the full configuration record — use this " +
+      "for deep inspection of one account.",
+    inputSchema: {
+      ad_account_id: z
+        .string()
+        .describe("Ad Account ID — accepts 'act_123456' or just '123456'"),
+      fields: z
+        .string()
+        .optional()
+        .describe("Comma-separated Meta API field list (overrides default field set)"),
+    },
+    handler: async (args) =>
+      metaGet(`/${toAdAccountPath(String(args.ad_account_id))}`, {
+        fields: args.fields ?? DEFAULT_ACCOUNT_FIELDS,
       }),
   },
 
   {
     name: "get_ads_volume",
     description:
-      "Get Meta Page ads volume for a ScaleForge Ad Account — shows active_ads_count, " +
-      "ads_limit (default 250), and remaining capacity on the associated Page. " +
-      "Use this BEFORE launching a new batch of creatives to avoid hitting Meta's " +
-      "per-Page limit (which is shared across all accounts using the same Page).",
+      "PRE-FLIGHT CHECK: Get per-Page ads-running-or-in-review counts and limits for an ad " +
+      "account. Meta caps active ads per Page (default 250) and this limit is SHARED across " +
+      "every account using the same Page. Always call this before a bulk activation to avoid " +
+      "silent review failures. Returns one row per Page actor.",
     inputSchema: {
-      id: z
-        .number()
-        .int()
-        .positive()
-        .describe("ScaleForge AdAccount ID (integer, not the Meta act_XXX string)"),
+      ad_account_id: z
+        .string()
+        .describe("Ad Account ID — accepts 'act_123456' or just '123456'"),
     },
-    handler: async (args) => apiCall(`/api/v1/ad_accounts/${args.id}/ads_volume`),
+    handler: async (args) =>
+      metaGet(`/${toAdAccountPath(String(args.ad_account_id))}/ads_volume`, {
+        show_breakdown_by_actor: true,
+        fields:
+          "actor_id,actor_name,ads_running_or_in_review_count,limit_on_ads_running_or_in_review",
+      }),
   },
 ];
