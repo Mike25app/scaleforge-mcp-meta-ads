@@ -1,5 +1,5 @@
 {
-  "name": "@scaleforge/mcp-meta-ads",
+  "name": "@getscaleforge/mcp-meta-ads",
   "version": "0.1.0",
   "description": "Model Context Protocol server for ScaleForge — control bulk Meta Ads campaigns via Claude, GPT, Cursor, or any MCP-compatible AI agent.",
   "type": "module",

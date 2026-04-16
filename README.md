@@ -2,7 +2,7 @@
 
 > **Control bulk Meta Ads campaigns from Claude, ChatGPT, Cursor, or any MCP-compatible AI agent.**
 
-[![npm](https://img.shields.io/npm/v/@scaleforge/mcp-meta-ads.svg)](https://www.npmjs.com/package/@scaleforge/mcp-meta-ads)
+[![npm](https://img.shields.io/npm/v/@getscaleforge/mcp-meta-ads.svg)](https://www.npmjs.com/package/@getscaleforge/mcp-meta-ads)
 [![license](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Node](https://img.shields.io/badge/node-%E2%89%A520-blue.svg)](#prerequisites)
 
@@ -82,13 +82,13 @@ Your agent never touches Meta's API directly — ScaleForge handles rate limits,
 ```bash
 claude mcp add scaleforge \
   --env SCALEFORGE_API_TOKEN=sf_live_your_token \
-  -- npx -y @scaleforge/mcp-meta-ads
+  -- npx -y @getscaleforge/mcp-meta-ads
 ```
 
 ### Claude Desktop / Cursor / Windsurf / Continue — via Smithery
 
 ```bash
-npx -y @smithery/cli install @scaleforge/mcp-meta-ads --client claude
+npx -y @smithery/cli install @getscaleforge/mcp-meta-ads --client claude
 # also: --client cursor | windsurf | continue
 ```
 
@@ -97,13 +97,13 @@ Smithery auto-writes the config file for the selected client and prompts you for
 ### Just test locally (no client setup)
 
 ```bash
-SCALEFORGE_API_TOKEN=sf_live_your_token npx -y @scaleforge/mcp-meta-ads
+SCALEFORGE_API_TOKEN=sf_live_your_token npx -y @getscaleforge/mcp-meta-ads
 ```
 
 The server starts on stdio; use `@modelcontextprotocol/inspector` to poke it interactively:
 
 ```bash
-npx -y @modelcontextprotocol/inspector npx -y @scaleforge/mcp-meta-ads
+npx -y @modelcontextprotocol/inspector npx -y @getscaleforge/mcp-meta-ads
 ```
 
 ---
@@ -119,7 +119,7 @@ npx -y @modelcontextprotocol/inspector npx -y @scaleforge/mcp-meta-ads
 ## Install
 
 ```bash
-npm install -g @scaleforge/mcp-meta-ads
+npm install -g @getscaleforge/mcp-meta-ads
 ```
 
 For local development before publish:
@@ -143,7 +143,7 @@ Edit `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) �
   "mcpServers": {
     "scaleforge": {
       "command": "npx",
-      "args": ["-y", "@scaleforge/mcp-meta-ads"],
+      "args": ["-y", "@getscaleforge/mcp-meta-ads"],
       "env": {
         "SCALEFORGE_API_TOKEN": "sf_live_your_token_here"
       }
@@ -159,7 +159,7 @@ Restart Claude Desktop. The 10 ScaleForge tools appear under the hammer icon.
 ```bash
 claude mcp add scaleforge \
   --env SCALEFORGE_API_TOKEN=sf_live_your_token_here \
-  -- npx -y @scaleforge/mcp-meta-ads
+  -- npx -y @getscaleforge/mcp-meta-ads
 ```
 
 Verify with `claude mcp list`.
@@ -173,7 +173,7 @@ Create or edit `.cursor/mcp.json` in your project root (or `~/.cursor/mcp.json` 
   "mcpServers": {
     "scaleforge": {
       "command": "npx",
-      "args": ["-y", "@scaleforge/mcp-meta-ads"],
+      "args": ["-y", "@getscaleforge/mcp-meta-ads"],
       "env": {
         "SCALEFORGE_API_TOKEN": "sf_live_your_token_here"
       }
