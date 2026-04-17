@@ -27,7 +27,9 @@ env:
 # Kamal proxy on the VM already runs (set up by the ScaleForge deploy). This
 # registers our container under /mcp alongside the Rails service.
 proxy:
-  ssl: true
+  # No `ssl:` here — Kamal proxy requires TLS to live on the root path
+  # service (the ScaleForge Rails app owns SSL for getscaleforge.com).
+  # This path-prefix service shares that cert automatically.
   hosts:
     - getscaleforge.com
   path_prefix: "/mcp"
