@@ -1,7 +1,7 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.mike25app/scaleforge-mcp-meta-ads",
-  "description": "Control Facebook & Instagram Ads via Meta Graph API v24.0. 32 tools covering campaigns, ad sets, creatives, insights, bulk ops with auto-batch, PBIA auto-provisioning, and pre-flight 250-ads-per-Page checks.",
+  "description": "Control Facebook & Instagram Ads via Meta Graph API v24.0. 32 tools, no backend required.",
   "repository": {
     "url": "https://github.com/Mike25app/scaleforge-mcp-meta-ads",
     "source": "github"
