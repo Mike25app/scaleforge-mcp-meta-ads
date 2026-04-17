@@ -1,9 +1,10 @@
 /**
  * Thin HTTP wrapper for the Meta Graph API (Marketing API v24.0).
  *
- * Reads config from env at module load. We exit fast if META_ACCESS_TOKEN is
- * missing — an MCP stdio server with no token can only return errors, so it's
- * better to fail the process and let the host surface the misconfiguration.
+ * Token resolution is lazy: each call reads the current token via
+ * getCurrentToken(), which checks AsyncLocalStorage (HTTP per-request) first
+ * and falls back to the META_ACCESS_TOKEN env (stdio). Stdio mode still fails
+ * fast because src/index.ts enforces the env check at startup.
  *
  * All requests flow directly from the MCP server to
  * https://graph.facebook.com/v24.0/* — there is no ScaleForge backend in the
@@ -11,18 +12,29 @@
  * API Explorer or a long-lived System User token from Business Manager).
  */
 
+import { getMetaToken } from "./helpers/session.js";
+
 export const META_API_BASE = "https://graph.facebook.com/v24.0";
 
-const TOKEN = process.env.META_ACCESS_TOKEN;
-
-if (!TOKEN) {
-  process.stderr.write(
-    "ERROR: META_ACCESS_TOKEN env var is required.\n" +
-      "Quick token (2 min, expires in ~2h): https://developers.facebook.com/tools/explorer/\n" +
-      "Stable token (never expires) via Business Manager System User:\n" +
-      "  https://github.com/Mike25app/scaleforge-mcp-meta-ads#stable-tokens\n",
+/**
+ * Resolve the Meta access token for the current call. Priority:
+ *   1. AsyncLocalStorage session context (HTTP mode, per-request token)
+ *   2. META_ACCESS_TOKEN env (stdio mode)
+ * Throws if neither is present so the MCP server can surface the error
+ * back through the tool-call response instead of crashing the process.
+ */
+function getCurrentToken(): string {
+  const sessionToken = getMetaToken();
+  if (sessionToken) return sessionToken;
+  const envToken = process.env.META_ACCESS_TOKEN;
+  if (envToken) return envToken;
+  throw new Error(
+    "META_ACCESS_TOKEN missing. Stdio mode: set the env var. HTTP mode: pass " +
+      "the token via ?config=<base64(JSON)> query or Authorization: Bearer. " +
+      "Get a token at https://developers.facebook.com/tools/explorer/ (2h) or " +
+      "via Business Manager System User (never expires): " +
+      "https://github.com/Mike25app/scaleforge-mcp-meta-ads#stable-tokens",
   );
-  process.exit(1);
 }
 
 /**
@@ -134,7 +146,7 @@ export async function metaGet<T = unknown>(
   params: Record<string, unknown> = {},
 ): Promise<T> {
   const qs = buildQuery(params);
-  qs.append("access_token", TOKEN!);
+  qs.append("access_token", getCurrentToken());
   const url = `${META_API_BASE}${normalizePath(path)}?${qs.toString()}`;
 
   const res = await fetch(url, { method: "GET" });
@@ -158,7 +170,7 @@ export async function metaPost<T = unknown>(
   body: Record<string, unknown> = {},
 ): Promise<T> {
   const form = buildQuery(body);
-  form.append("access_token", TOKEN!);
+  form.append("access_token", getCurrentToken());
   const url = `${META_API_BASE}${normalizePath(path)}`;
 
   const res = await fetch(url, {
@@ -181,7 +193,7 @@ export async function metaPost<T = unknown>(
  */
 export async function metaDelete<T = unknown>(path: string): Promise<T> {
   const qs = new URLSearchParams();
-  qs.append("access_token", TOKEN!);
+  qs.append("access_token", getCurrentToken());
   const url = `${META_API_BASE}${normalizePath(path)}?${qs.toString()}`;
 
   const res = await fetch(url, { method: "DELETE" });
@@ -227,7 +239,7 @@ export async function metaBatch(
   for (let i = 0; i < requests.length; i += CHUNK) {
     const slice = requests.slice(i, i + CHUNK);
     const form = new URLSearchParams();
-    form.append("access_token", TOKEN!);
+    form.append("access_token", getCurrentToken());
     form.append("batch", JSON.stringify(slice));
 
     const res = await fetch(META_API_BASE + "/", {
