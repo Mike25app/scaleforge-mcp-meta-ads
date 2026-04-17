@@ -34,6 +34,17 @@ No ScaleForge backend is in the chain. Your agent → this MCP → `https://grap
 
 ---
 
+## Hosted endpoint (no install)
+
+Use the ScaleForge-hosted Streamable HTTP endpoint — zero install, nothing to run locally:
+
+- **Smithery listing:** `https://smithery.ai/server/kirichyk-misha/meta-ads` (one-click install for Claude Desktop, Cursor, Windsurf, Continue, ChatGPT Desktop — Smithery prompts for your Meta token, writes the config).
+- **Direct URL** for custom clients: `https://getscaleforge.com/mcp` (MCP Streamable HTTP). Supply your token via Smithery session config or `Authorization: Bearer <token>` header.
+
+Prefer a local npm install? Use the stdio package below.
+
+---
+
 ## Quick start — pick one
 
 ### Smithery (easiest, auto-configures the client)
