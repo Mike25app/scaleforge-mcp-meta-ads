@@ -11,15 +11,17 @@
   "packages": [
     {
       "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "@getscaleforge/mcp-meta-ads",
       "version": "0.2.2",
+      "runtimeHint": "npx",
       "transport": {
         "type": "stdio"
       },
       "environmentVariables": [
         {
           "name": "META_ACCESS_TOKEN",
-          "description": "Meta Marketing API access token. Use a System User token from Business Manager for production (never expires), or a Graph API Explorer user token for quick testing (expires ~2h). Required scopes: ads_management, ads_read, business_management, pages_read_engagement, pages_manage_ads.",
+          "description": "Meta Marketing API token (System User or Graph API Explorer). See README.",
           "isRequired": true,
           "isSecret": true
         }
