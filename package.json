@@ -1,6 +1,7 @@
 {
   "name": "@getscaleforge/mcp-meta-ads",
-  "version": "0.2.0",
+  "version": "0.2.1",
+  "mcpName": "io.github.mike25app/scaleforge-mcp-meta-ads",
   "description": "Meta Ads MCP server — control Facebook/Instagram campaigns from Claude, ChatGPT, Cursor, or any MCP agent. Direct Meta Graph API v24.0, 32 tools, no backend required.",
   "type": "module",
   "main": "dist/index.js",
