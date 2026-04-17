@@ -30,6 +30,20 @@ import { pageTools } from "./tools/pages.js";
 import { adsLibraryTools } from "./tools/adslibrary.js";
 import type { ToolDef } from "./tools/types.js";
 
+// Stdio requires the token at launch — fail fast if missing, matching the
+// pre-0.3.0 behaviour for npm / Claude Desktop users. HTTP mode (src/http.ts)
+// does NOT do this check because the token arrives per-request via Smithery
+// Gateway session config.
+if (!process.env.META_ACCESS_TOKEN) {
+  process.stderr.write(
+    "ERROR: META_ACCESS_TOKEN env var is required for stdio mode.\n" +
+      "Quick token (2 min, expires in ~2h): https://developers.facebook.com/tools/explorer/\n" +
+      "Stable token (never expires) via Business Manager System User:\n" +
+      "  https://github.com/Mike25app/scaleforge-mcp-meta-ads#stable-tokens\n",
+  );
+  process.exit(1);
+}
+
 const allTools: ToolDef[] = [
   ...accountTools,
   ...campaignTools,
