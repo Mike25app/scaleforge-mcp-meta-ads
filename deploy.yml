@@ -1,0 +1,47 @@
+# Kamal config for the HTTP Streamable MCP server.
+# Deploy: `kamal setup` (first time) / `kamal deploy` (subsequent)
+#
+# Coexists with the ScaleForge Rails app on the same Hetzner VM and the same
+# Kamal proxy: Rails owns getscaleforge.com/*, this service owns /mcp*.
+
+service: scaleforge-mcp
+
+# Docker Hub registry. Repo auto-creates on first push.
+image: kirichukmisha/scaleforge-mcp
+
+servers:
+  web:
+    hosts:
+      - 5.78.126.176
+
+registry:
+  username: kirichukmisha
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+
+env:
+  clear:
+    NODE_ENV: production
+    PORT: "4000"
+
+# Kamal proxy on the VM already runs (set up by the ScaleForge deploy). This
+# registers our container under /mcp alongside the Rails service.
+proxy:
+  ssl: true
+  hosts:
+    - getscaleforge.com
+  path_prefix: "/mcp"
+  strip_path_prefix: false
+  app_port: 4000
+  healthcheck:
+    path: "/mcp/health"
+    interval: 30
+
+ssh:
+  user: root
+
+# Build amd64 locally and push to Docker Hub; the Hetzner VM pulls. If local
+# Docker is unavailable, uncomment `remote:` to build on the VM.
+builder:
+  arch: amd64
+  # remote: ssh://root@5.78.126.176
