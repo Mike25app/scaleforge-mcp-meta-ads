@@ -118,6 +118,32 @@ const httpServer = http.createServer(async (req, res) => {
       return;
     }
 
+    // Static server card so Smithery Gateway picks up our configSchema
+    // (Meta access token prompt) without needing it re-entered on every publish.
+    // See https://smithery.ai/docs/build/publish#server-scanning
+    if (path === "/mcp/.well-known/mcp/server-card.json" && method === "GET") {
+      const card = {
+        serverInfo: { name: "mcp-meta-ads", version: "0.3.0" },
+        authentication: { required: true, schemes: ["bearer"] },
+        configSchema: {
+          type: "object",
+          required: ["metaAccessToken"],
+          properties: {
+            metaAccessToken: {
+              type: "string",
+              title: "Meta Access Token",
+              description:
+                "Meta Marketing API token. Graph API Explorer (2h) or System User (stable).",
+              "x-from": { query: "metaAccessToken" },
+            },
+          },
+        },
+      };
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify(card));
+      return;
+    }
+
     if (path === "/mcp" && (method === "POST" || method === "GET" || method === "DELETE")) {
       const token = extractToken(url, req.headers);
       const server = buildServer();
