@@ -1,6 +1,6 @@
 {
   "name": "@getscaleforge/mcp-meta-ads",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "mcpName": "io.github.Mike25app/scaleforge-mcp-meta-ads",
   "description": "Meta Ads MCP by ScaleForge — control Facebook/Instagram campaigns from Claude, ChatGPT, Cursor, or any MCP agent. Direct Meta Graph API v24.0, 32 tools, no backend required.",
   "type": "module",
@@ -16,6 +16,8 @@
     "build": "tsc",
     "watch": "tsc --watch",
     "start": "node dist/index.js",
+    "serve": "node dist/http.js",
+    "test": "node --test dist/helpers/session.test.js",
     "prepublishOnly": "npm run build && chmod +x dist/index.js"
   },
   "keywords": [
