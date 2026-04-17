@@ -1,18 +1,18 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
-  "name": "io.github.mike25app/scaleforge-mcp-meta-ads",
+  "name": "io.github.Mike25app/scaleforge-mcp-meta-ads",
   "description": "Control Facebook & Instagram Ads via Meta Graph API v24.0. 32 tools, no backend required.",
   "repository": {
     "url": "https://github.com/Mike25app/scaleforge-mcp-meta-ads",
     "source": "github"
   },
-  "version": "0.2.1",
+  "version": "0.2.2",
   "websiteUrl": "https://getscaleforge.com",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "@getscaleforge/mcp-meta-ads",
-      "version": "0.2.1",
+      "version": "0.2.2",
       "transport": {
         "type": "stdio"
       },
