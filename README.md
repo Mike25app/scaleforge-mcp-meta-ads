@@ -1,4 +1,4 @@
-# Meta Ads MCP
+# Meta Ads MCP by ScaleForge
 
 > **Control Facebook & Instagram Ads from Claude, ChatGPT, Cursor, or any MCP-compatible agent.**
 >
