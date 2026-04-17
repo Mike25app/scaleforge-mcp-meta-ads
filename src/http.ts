@@ -70,14 +70,18 @@ function buildServer(): McpServer {
 
 /**
  * Resolve the caller's Meta Access Token. Priority:
- *   1. ?config=<base64(JSON)> query — Smithery Gateway standard
- *   2. Authorization: Bearer <token> — direct MCP clients / MCP Inspector
- *   3. META_ACCESS_TOKEN env — local dev
+ *   1. ?metaAccessToken=<token> query — Smithery Gateway default (plain query)
+ *   2. ?config=<base64(JSON)> query — Smithery Gateway legacy / other clients
+ *   3. Authorization: Bearer <token> — direct MCP clients / MCP Inspector
+ *   4. META_ACCESS_TOKEN env — local dev
  * Returns undefined if none present; client.ts will surface the error
  * back through the MCP protocol only when a tool actually needs the token
  * (tools/list and initialize work without one so Smithery can scan).
  */
 function extractToken(url: URL, headers: http.IncomingHttpHeaders): string | undefined {
+  const directParam = url.searchParams.get("metaAccessToken");
+  if (directParam) return directParam;
+
   const configParam = url.searchParams.get("config");
   if (configParam) {
     try {
